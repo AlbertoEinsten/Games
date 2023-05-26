@@ -8,6 +8,12 @@ def update_laser(laser_list,speed=300):
         if laserRec.midbottom[1] < 0:
             laser_list.remove(laserRec)
 
+def displayScore(tela,font):
+    score_text = str(f"S T A R - GAME {pygame.time.get_ticks()//1000}")
+    texto = font.render(score_text, True, (244,164,96))
+    recText = texto.get_rect(midleft=(30,15))
+    tela.blit(texto, recText)
+
 pygame.init()
 
 width,height = 1200,650
@@ -56,10 +62,11 @@ while loop:
     tela.blit(nave, navRec)
     for laserRec in laser_list:
         tela.blit(lasersurf, laserRec)
-        update_laser(laser_list)
+    
+    
+    update_laser(laser_list)
 
-    tela.blit(texto, recText)
- 
+    displayScore(tela=tela,font=font)
     
     pygame.display.update()
     end = int(round(time.time()*1000))
