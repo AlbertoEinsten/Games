@@ -1,19 +1,29 @@
 import pygame
 import sys,os,time
 
+
+def update_laser(laser_list,speed=300):
+    for laserRec in laser_list:
+        laserRec.y -= round(speed*dt)
+        if laserRec.midbottom[1] < 0:
+            laser_list.remove(laserRec)
+
 pygame.init()
 
 width,height = 1200,650
 tela = pygame.display.set_mode((width,height))
 
 fundo = pygame.image.load(os.path.join("assets","img","espaco.png")).convert_alpha()
-laser = pygame.image.load(os.path.join("assets","img","laser.png")).convert_alpha()
-lasRec = laser.get_rect(center=(500,500))
+lasersurf = pygame.image.load(os.path.join("assets","img","laser.png")).convert_alpha()
+lasersurf = pygame.transform.scale(lasersurf, (4,40))
 
 nave = pygame.image.load(os.path.join("assets","img","ship.png")).convert_alpha()
 nave = pygame.transform.scale(nave,(40,40))
 navRec = nave.get_rect(center=(500,500))
+laser_list = []
+laserRec = lasersurf.get_rect(midbottom=navRec.midtop)
 print(navRec)
+#print(laserRec)
 
 bg1 = pygame.image.load(os.path.join("assets","img","espaco.png")).convert_alpha()
 
@@ -29,19 +39,25 @@ relogio = pygame.time.Clock()
 
 while loop:
     start = int(round(time.time()*1000))
-    for event in pygame.event.get():
+    for event in pygame.event.get():                                                                                                                                                                                                                                                                                                                                                                        
         if event.type == pygame.QUIT:
             loop = False
             sys.exit()
         if event.type == pygame.MOUSEMOTION:
             navRec.center = event.pos
-        if event.type == pygame.MOUSEBUTTONUP:
-            print(f"Tiro {event.pos}")
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            laserRec = lasersurf.get_rect(midbottom=navRec.midtop)
+            laser_list.append(laserRec)
+
+    laserRec.y -= 1
 
     tela.fill((0,0,0))
     tela.blit(fundo, (0,0))
-    tela.blit(laser, lasRec)
     tela.blit(nave, navRec)
+    for laserRec in laser_list:
+        tela.blit(lasersurf, laserRec)
+        update_laser(laser_list)
+
     tela.blit(texto, recText)
  
     
@@ -49,5 +65,5 @@ while loop:
     end = int(round(time.time()*1000))
 
     #print(f"{end - start} ms")
-    relogio.tick(120)
+    dt = relogio.tick(120)/1000
 pygame.quit()
